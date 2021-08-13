@@ -1,0 +1,3 @@
+static void %%%%(sqlctx *ctx, int argc, sqlval **argv) {
+  %%%%
+}

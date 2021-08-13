@@ -1,0 +1,6 @@
+CREATE TRIGGER %%%%
+  AFTER %%%% ON %%%%
+  BEGIN
+    %%%%
+  END
+;

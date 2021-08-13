@@ -1,0 +1,11 @@
+cp ~/.vimrc .
+
+rsync -ar --delete  \
+  ~/.vim/after      \
+  ~/.vim/colors     \
+  ~/.vim/snips      \
+  ~/.vim/dict       \
+.vim
+
+./sanitize
+
