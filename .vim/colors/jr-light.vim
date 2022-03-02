@@ -3,7 +3,7 @@
 
 hi clear
 syn reset
-let g:colors_name = "mia-light"
+let g:colors_name = "jr-light"
 set bg=light
 
 
@@ -20,7 +20,7 @@ hi Directory          cterm=NONE      ctermbg=NONE  ctermfg=5
 hi Folded             cterm=NONE      ctermbg=NONE  ctermfg=8 
 hi LineNr             cterm=NONE      ctermbg=NONE  ctermfg=251
 hi CursorLineNr       cterm=NONE      ctermbg=NONE  ctermfg=248
-hi MatchParen         cterm=NONE      ctermbg=8     ctermfg=15
+hi MatchParen         cterm=NONE      ctermbg=15    ctermfg=0
 hi ModeMsg            cterm=NONE      ctermbg=NONE  ctermfg=8 
 hi NonText            cterm=NONE      ctermbg=NONE  ctermfg=251
 hi Pmenu              cterm=NONE      ctermbg=255   ctermfg=0 
@@ -33,8 +33,8 @@ hi Visual             cterm=NONE      ctermbg=6     ctermfg=15
 hi WarningMsg         cterm=NONE      ctermbg=NONE  ctermfg=1 
 hi ErrorMsg           cterm=NONE      ctermbg=1     ctermfg=15
 
-hi VertSplit          cterm=NONE      ctermbg=254   ctermfg=254
-hi StatusLine         cterm=NONE      ctermbg=8     ctermfg=0
+hi VertSplit          cterm=NONE      ctermbg=255   ctermfg=255
+hi StatusLine         cterm=NONE      ctermbg=248   ctermfg=0
 hi StatusLineNC       cterm=NONE      ctermbg=252   ctermfg=243
 hi StatusLineTerm     cterm=NONE      ctermbg=8     ctermfg=0
 hi StatusLineTermNC   cterm=NONE      ctermbg=252   ctermfg=243
@@ -60,8 +60,8 @@ hi Function           cterm=NONE      ctermbg=NONE  ctermfg=04
 
 hi Statement          cterm=NONE      ctermbg=NONE  ctermfg=01
 hi Conditional        cterm=NONE      ctermbg=NONE  ctermfg=05
-hi Repeat             cterm=NONE      ctermbg=NONE  ctermfg=03
-hi Label              cterm=NONE      ctermbg=NONE  ctermfg=03
+hi Repeat             cterm=NONE      ctermbg=NONE  ctermfg=05
+hi Label              cterm=NONE      ctermbg=NONE  ctermfg=06
 hi Operator           cterm=NONE      ctermbg=NONE  ctermfg=00
 hi Keyword            cterm=NONE      ctermbg=NONE  ctermfg=05
 hi Exception          cterm=NONE      ctermbg=NONE  ctermfg=01
@@ -86,7 +86,7 @@ hi Debug              cterm=NONE      ctermbg=NONE  ctermfg=01
 
 hi Title              cterm=NONE      ctermbg=NONE  ctermfg=06
 
-hi Error              cterm=NONE      ctermbg=01    ctermfg=00
+hi Error              cterm=NONE      ctermbg=01    ctermfg=15
 
 hi Todo               cterm=NONE      ctermbg=NONE  ctermfg=08
 

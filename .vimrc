@@ -2,28 +2,27 @@
 " {{{ Core
 
 set nocompatible
+set backspace=2
 set lazyredraw
 set timeoutlen=1000 ttimeoutlen=0
 set clipboard^=unnamed,unnamedplus
 filetype plugin indent on
 let mapleader = " "
+set t_Co=256
 
+if has('osx')
+  source ~/.vim/init-macos.vim
+elseif has('linux')
+  source ~/.vim/init-linux.vim
+endif
 
 
 
 " }}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " {{{ Colors
 
-set t_Co=256
-
 command! DARK colo jr-dark
 command! LIGHT colo jr-light
-
-if !exists('g:colors_name')
-  syn on
-  let theme = readfile(expand('~/.termcolor'))[0]
-  exe 'colo jr-'.theme
-endif
 
 
 
@@ -44,11 +43,10 @@ set cpoptions-=a
 
 " GUI
 set wildmode=list:longest
-set completeopt=menuone
+set wildmenu
 set foldlevel=99
 set foldminlines=0
 set foldmethod=indent
-set wildmenu
 set hidden
 set nowrap
 set scrolloff=2
@@ -58,6 +56,11 @@ set mouse=a
 set previewheight=20
 set sidescroll=1
 set sidescrolloff=2
+set ruler
+
+" Autocomplete
+set completeopt=menuone,noinsert
+set infercase
 
 " Search
 set ignorecase
@@ -82,7 +85,7 @@ set undodir=~/.vim/.undo
 set viminfo+=n~/.vim/.viminfo
 
 " Tags
-set tags=./.git/tags;
+set tags=./.git/tags;./.tags
 
 " History
 set history=4096
@@ -95,7 +98,7 @@ set undolevels=500
 if executable('rg')
   set grepprg=rg\ --vimgrep\ --glob='!tmp'\ $*
 endif
-command! -nargs=+ Grep silent! grep! <q-args> | bot copen | redraw!
+command! -nargs=+ Grep silent! grep! <args> | bot copen | redraw!
 
 " Netrw
 let g:netrw_list_hide = '^\./$,^\.\./$'
@@ -109,9 +112,18 @@ let g:netrw_sort_sequence = '[\/]$,*' . (empty(&suffixes) ? '' : ',\%(' .
 let g:sql_type_default = 'sqlite'
 
 " Quickfix
-augroup qf_cursorline | au!
+augroup quickfix | au!
+  " always show cursor line:
   au FileType qf setl cursorline
+  " open files in most recent window:
+  au FileType qf nnoremap <cr> :exe 'wincmd p \| '.line('.').'cc'<cr>
+  " set height to 1/3 of the screen:
+  au FileType qf exe (&lines / 3).'wincmd _'
 augroup END
+
+" Modelines
+set modeline
+set modelines=4
 
 
 
@@ -123,6 +135,9 @@ augroup END
 noremap ` '
 noremap ' `
 
+" Better line copying
+nnoremap Y y$
+
 " Move Cursor Around
 map <c-j> 8j
 map <c-k> 8k
@@ -130,7 +145,7 @@ map <c-l> <c-w>l
 map <c-h> <c-w>h
 map <leader>j <c-w>j
 map <leader>k <c-w>k
-map <leader><tab> <c-w>p
+"map <leader><tab> <c-w>p
 " experiment:
 map gj <c-w>j
 map gk <c-w>k
@@ -157,11 +172,14 @@ nmap <leader>ss :SessionCreate<space>
 nmap <leader>so :call FuzzyFind('ls -1 ~/.vim/sessions', ':SessionLoad %s')<cr>
 
 " Fuzzy Find
-nmap <leader>ee :call FuzzyFile('', 'call EditIfExists("%s")')<cr>
-nmap <leader>er :call FuzzyFind("cat ~/.vim/.mru", ':e %s')<cr>
-nmap <leader>e- :call FuzzyFile('--no-ignore '.expand('%:p:h'), ':e %s')<cr>
-nmap <leader>e. :call FuzzyBufs(':b %s')<cr>
-nmap <leader>e; :exe 'e /tmp/scratch-'.localtime()<cr>
+nmap <leader>ee  :call FuzzyFile('', 'EditX %s')<cr>
+nmap <leader>er  :call FuzzyFind("cat ~/.vim/.mru", 'EditX %s')<cr>
+nmap <leader>e-  :call FuzzyFile('--no-ignore '.getcwd(), 'EditX %s')<cr>
+nmap <leader>e.  :call FuzzyBufs(':b %s')<cr>
+nmap <leader>e;  :exe 'edit /tmp/scratch-'.localtime()<cr>
+nmap <leader>ete :call FuzzyFile('', 'tab split %s')<cr>
+nmap <leader>etr :call FuzzyFind('cat ~/.vim/.mru', 'tab split %s')<cr>
+nmap <leader>et- :call FuzzyFile('--no-ignore '.getcwd(), 'tab split %s')<cr>
 
 " Refresh
 nmap <leader>rv :source ~/.vimrc<cr>
@@ -173,13 +191,14 @@ nmap <leader>rP :sp<cr>:silent bufdo call SourceLocalVimrc()<cr>:q<cr>:echo<cr>
 nmap <leader>rr :e<cr>
 
 " Vimscript
-vmap <leader>vv :<c-u>@*<cr>
+vmap <leader>vv "vy:<c-u>@V<cr>
 nmap <leader>vv vil<leader>vv
 nmap <leader>vp myvip<leader>vv'y
 nmap <leader>vf myggVG<leader>vv'y
 
 " Windows
 nmap <leader>pq :pclose<cr>
+nnoremap <leader>pQ :call popup_clear(1)<cr>
 nmap <c-w>z :tab sp<cr>
 tnoremap <c-w><tab> gt
 
@@ -194,7 +213,7 @@ map <leader>q :q<cr>
 map Q @q
 
 " Visual Mode
-vnoremap v V
+vnoremap <expr> v (mode() ==# 'v' ? 'V' : '<c-v>')
 vnoremap p "_dP
 vnoremap P "_dP
 
@@ -241,10 +260,10 @@ nmap <leader>tq :TermQuit<cr>
 nmap <leader>tQ :TermQuit!<cr>
 nmap <leader>t; :Term bash<cr><c-w>p
 " send and jump:
-vmap <leader>x<leader> :<c-u>call TermEval(@*, 1)<cr>
+vmap <leader>x<leader> "xy:<c-u>call TermEval(@x, 1)<cr>
 nmap <leader>x<leader> :call TermEval(getline('.'), 1)<cr>
 " send and stay:
-vmap <leader>xx :<c-u>call TermEval(@*)<cr>
+vmap <leader>xx "xy:<c-u>call TermEval(@x)<cr>
 nmap <leader>xx :call TermEval(getline('.'))<cr>
 nmap <leader>xf :Stay ggVG<leader>xx<cr>
 nmap <leader>xp :Stay vip<leader>xx<cr>
@@ -253,7 +272,7 @@ nmap <leader>xo :Stay vio<leader>xx<cr>
 imap <c-f8> <esc><leader>xxa
 
 " Errors
-nmap <leader>co :below copen<cr>
+nmap <leader>co :botright 20copen<cr>
 nmap <leader>cn :cnext<cr>
 nmap <leader>cp :cprev<cr>
 nmap <leader>cf :cnfile<cr>
@@ -265,6 +284,19 @@ nnoremap <leader>] "tyiw<c-w>p:tag <c-r>t<cr>zz8<c-e><c-w>p10<>
 " Align
 vnoremap <leader>a :Align<space>
 
+" Other File
+nnoremap <leader>eo :call OtherFile_Show(0)<cr>
+nnoremap <leader>eO :call OtherFile_Show(1)<cr>
+
+" End of line backslash
+nnoremap <leader>\ :BslashEOL<cr>
+vnoremap <leader>\ :BslashEOL<cr>
+
+" DirTree
+nnoremap <leader>dp :topleft 32vnew \| set winfixwidth \| wincmd = \| Tree -l<cr>
+nnoremap <leader>dq :exe winbufnr(1).'bwipeout' \| echo<cr>
+nnoremap <leader><tab> 1<c-w>w
+
 
 
 
@@ -273,13 +305,13 @@ vnoremap <leader>a :Align<space>
 
 fun! GetChar(...)
   let [line, colu] = (a:0 > 1) ? [a:1, a:2] : ['.', a:1]
-  if (colu =~ '\$') | let colu = col('$') - 2 | endif
+  if (colu =~ '\$') | let colu = charcol('$') - 2 | endif
   return strcharpart(getline(line), colu, 1)
 endfun
 
 fun! CurChar(...)
   let off = 1 - (a:0 > 0 ? a:1 : 0)
-  return GetChar('.', col('.') - off)
+  return GetChar('.', charcol('.') - off)
 endfun
 
 fun! SyntaxAt(line, col, trans)
@@ -297,18 +329,17 @@ fun! Chars(str)
   return split(a:str, '\zs')
 endfun
 
-let g:ctags_opt = get(g:, 'ctags_opt', {})
-fun! GenCTags(...)
-"  let dir = expand('%:p:h')
+let g:ctags_opt = get(g:, 'ctags_opt', ['--kinds-C=*'])
+fun! GenCTags()
   let dir = getcwd()
   let opt = '-R --sort=yes --extras=Ff -f .git/tags'
-  let cmd = 'ctags '.opt.' '.get(g:ctags_opt, &ft, '')
+  let cmd = 'ctags '.opt.' '.(g:ctags_opt.join(' '))
   echom cmd.' '.dir
   call TaskStart('ctags', cmd.' '.dir)
 endfun
 
 fun! ShouldSwapUnderscoreHyphen(char)
-  return (col('.') > 1) && (CurChar(-1) !~ '\v[[:space:]'.a:char.']')
+  return (col('.') > 1) && (CurChar(-1) !~ '\v["[:space:]'.a:char.']')
 endfun
 
 fun! SwapUnderscoreHyphen()
@@ -363,6 +394,7 @@ fun! EditIfExists(path)
     echo "No such file"
   endif
 endfun
+com! -nargs=1 -complete=file EditX call EditIfExists(<f-args>)
 
 fun! EchoHL(hl, ...)
   let hl = a:0 ? a:hl : split(a:hl)[0]
@@ -381,6 +413,21 @@ hi EchoDim  ctermfg=8
 
 command! Marks :marks abcdefghijklmnopqrstuvwxyz
 
+fun! BslashEOL(first, last)
+  let vov = winsaveview()
+  set virtualedit=all
+  for line in range(a:first, a:last)
+    exe 'norm '.line.'gg'
+    .s/\v(\s|\\)+$//e
+    exe 'norm '.&tw.'|r\'
+  endfor
+  set virtualedit=
+  call winrestview(vov)
+endfun
+command! -range BslashEOL call BslashEOL(<line1>, <line2>)
+
+let g:borderchars = ['─', '│', '─', '│', '┌', '┐', '┘', '└']
+
 
 
 
@@ -392,7 +439,7 @@ fun! BrowseDirectory()
   Ex
   setl bufhidden=wipe buftype=quickfix
   nnoremap <buffer> <leader>q :Rex<cr>
-  exe 'silent! /'.fname
+  exe 'silent! /\v^'.fname.'$'
 endfun
 
 
@@ -409,15 +456,34 @@ fun! SourceLocalVimrc()
   if filereadable(file) | exe "source ".file | echom "Sourced ".file | endif
 endfun
 
+fun! FileTypeFn(type, fn)
+  " Run filetype setup when files are loaded
+  exe printf('augroup ft_%s | au!', a:type)
+  exe printf('au FileType %s call %s()', a:type, a:fn)
+  exe printf('augroup END')
+  exe printf('if (&ft == "%s") | call %s() | endif', a:type, a:fn)
+endfun
+command! -nargs=+ FileTypeFn call FileTypeFn(<f-args>)
+
+fun! FileNameFn(name, fn)
+  let auname = substitute(a:name, '[^[:alnum:]]', '_', 'g')
+  exe printf('augroup file_%s | au!', auname)
+  exe printf('au BufRead %s call %s()', a:name, a:fn)
+  exe printf('augroup END')
+  exe printf('if (expand("%") =~ "%s") | call %s() | endif', a:name, a:fn)
+endfun
+command! -nargs=+ FileNameFn call FileNameFn(<f-args>)
+
 
 
 
 " }}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " {{{ Fuzzy Find
 
-fun! FuzzyFind(shcmd, vimcmd)
+fun! FuzzyFind(shcmd, vimcmd, ...)
+  let fzyopts = a:0 ? a:1 : ''
   try
-    let output = system(a:shcmd . ' 2>/dev/null' . ' | fzy')
+    let output = system(a:shcmd . ' 2>/dev/null' . ' | fzy '.fzyopts)
   finally
     redraw!
   endtry
@@ -431,12 +497,13 @@ fun! FuzzyList(list, vimcmd)
   return FuzzyFind(shcmd, a:vimcmd)
 endfun
 
-fun! FuzzyFile(dir, vimcmd)
+fun! FuzzyFile(dir, vimcmd, ...)
+  let fzyopts = a:0 ? '--lines '.&lines : ''
   let opts = '--files --hidden --follow '
         \  . '--glob !.git '
         \  . '--glob !.swap '
         \  . '--glob !.undo '
-  call FuzzyFind('rg '.opts.' '.a:dir, a:vimcmd)
+  call FuzzyFind('rg '.opts.' '.a:dir, a:vimcmd, fzyopts)
 endfun
 
 fun! FuzzyBufs(vimcmd)
@@ -493,9 +560,9 @@ let g:taskcbs = get(g:, 'taskcbs', {})
 fun! TaskStart(name, cmd, ...)
   let opt = a:0 ? a:1 : {}
   if has_key(g:tasks, a:name) | return | endif
-  let cmd = a:cmd . ' >/tmp/vimtask_'.fnameescape(a:name).' 2>&1'
-  let job = ShellJob(cmd, extend(opt, {'exit_cb': 'TaskFinished'}))
-  let g:tasks[a:name] = job
+  let outfile = '/tmp/vimtask_'.fnameescape(a:name)
+  let cmd = printf('{ %s ;} >%s 2>&1', a:cmd, outfile)
+  let g:tasks[a:name] = ShellJob(cmd, extend(opt, {'exit_cb': 'TaskFinished'})) 
 endfun
 
 fun! TaskFinished(job, status)
@@ -513,7 +580,7 @@ endfun
 fun! TaskCopen(name, ...)
   let opt = extend((a:0 ? a:1 : {}), {'lines': systemlist('cat /tmp/vimtask_'.fnameescape(a:name))})
   call setqflist([], ' ', opt)
-  bot copen
+  exe 'bot copen '.get(g:, 'qfheight', 10)
 endfun
 
 fun! TaskCb(name, fn)
@@ -718,12 +785,13 @@ command! -range CommentToggle :call CommentToggle(<line1>, <line2>)
 fun! TextBar(...)
   let com = exists('b:commentbar') ? b:commentbar : (len(&cms) ? &cms : '-')
   let pattern = a:0 ? a:1 : com
+  let length = a:0 > 1 ? a:2 : &textwidth
   let both = split(pattern, '%s')
   let prefix = trim(both[0])
   let suffix = (len(both) > 1) ? both[-1:][0] : ''
-  let filler = prefix[-1:]
-  let n = &textwidth - (virtcol('.') - 1) - len(prefix) - len(suffix)
-  return prefix . repeat(filler, n) . suffix
+  let filler = strcharpart(prefix, strchars(prefix)-1)
+  let n = length - (virtcol('.') - 1) - strchars(prefix) - strchars(suffix)
+  return (n < 1) ? '' : (prefix . repeat(filler, n) . suffix)
 endfun
 
 
@@ -770,7 +838,7 @@ augroup END
 " TODO: fix sed calls so this can align on any printable character
 command! -nargs=1 -range Align
         \ <line1>,<line2>!sed 's^<args>^•✔&^g'
-                       \ |column -e -t -s "•"
+                       \ |column -t -s "•"
                        \ |sed 's^  ✔^^g'
 
 
@@ -835,17 +903,43 @@ command! SnipList call FuzzyFind('ls '.SnipFile(''), ':SnipInsert %s')
 
 fun! SetAltFile()
   let old = get(w:, 'curfile', '')
-  let new = expand('%')
-  if (old == new) | return | endif
+  let new = resolve(expand('%'))
   if !len(new) | return | endif
+  if (old == new) | return | endif
   let w:curfile = new
   let old_is_real_file = len(old) && !len(getbufvar(bufnr(old), '&buftype'))
+                       \ && filereadable(old)
   if old_is_real_file | let @# = old | endif
 endfun
 
 augroup altfile | au!
   au BufWinEnter * call SetAltFile()
 augroup END
+
+
+
+
+" }}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" {{{ Other File 
+
+let g:otherfile = get(g:, 'otherfile', {})
+
+fun! OtherFile_Show(create)
+  let path = resolve(expand('%'))
+  let root = fnamemodify(path, ':r')
+  for other in get(g:otherfile, fnamemodify(path, ':e'), [])
+    if a:create || filereadable(root.'.'.other)
+      exe 'e '.root.'.'.other
+      return
+    endif
+  endfor
+endfun
+
+fun! OtherFile_Add(ext, others)
+  let g:otherfile[a:ext] = get(g:otherfile, a:ext, []) + split(a:others, ',')
+endfun
+
+command! -nargs=+ OtherFile call OtherFile_Add(<f-args>)
 
 
 
@@ -870,7 +964,17 @@ nmap <leader>hs :echo DbgHighlight()<cr>
 
 
 
+" }}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" {{{ Platform-Specific
+
+if has('macunix')
+  nnoremap Z <c-z>
+endif
+
+
+
+
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}}}
 
-" vim: set fdm=marker tw=80 sts=2 ts=2 sw=2 et :
-
+" vim: set fdm=marker tw=80 sts=2 ts=2 sw=2 et tags=~/.vim/tags :
+"

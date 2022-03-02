@@ -1,3 +1,3 @@
-typedef struct %%name%% {
+struct %%%% {
   %%%%
-} %%name%%;
+};

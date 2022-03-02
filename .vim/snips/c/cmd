@@ -1,3 +1,4 @@
-DEFCMD( %%%% ) {
+static int
+gigcmd_%%%%(GigVM *vm, GigCCmd *cmd, GigList *args) {
   %%%%
 }

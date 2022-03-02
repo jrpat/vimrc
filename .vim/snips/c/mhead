@@ -1,0 +1,7 @@
+#ifndef %%name%%__H
+#define %%name%%__H
+
+%%%%
+
+#endif /* %%name%%__H */
+

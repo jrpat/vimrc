@@ -5,14 +5,18 @@ setl noet
 
 hi link goSpaceError Normal
 
+set indentkeys-=<:>   " switch/case indenting is wonky
+
 
 inoremap <buffer> :: :=<space>
 inoremap <buffer> ;p fmt.Println()<left>
 inoremap <buffer> ;P fmt.Printf("X", %%%%)<esc>FXs
 inoremap <buffer> ;r &
+inoremap <buffer> ;s *
 
 
-set indentkeys-=<:>   " switch/case indenting is wonky
+nnoremap <buffer> <leader>tt :Term $SHELL<cr>
+nnoremap <buffer> <leader>xx :TermEval go run .<cr>
 
 
 fun! GoUpperMethod(char)

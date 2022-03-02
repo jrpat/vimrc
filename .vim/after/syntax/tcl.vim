@@ -1,4 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Custom Highlighting
 
 syn keyword Keyword set lassign
@@ -7,17 +7,22 @@ syn match Keyword /\v<dict set>/
 syn match Keyword /\v(^|\s)<variable>/
 
 syn clear tclCommand
-syn clear tcltkCommand
 
 hi link tclRepeat Keyword
-
 
 syn keyword PreProc source
 syn match PreProc /\v<package require>/
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Variables
+
+syn match tclVarRef /\v\$(\k|:){-}\(\k{-}\)/
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Proc Names
 
 syn clear tclProcCommand
@@ -35,7 +40,7 @@ hi link tclProcName Function
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Namespace Names
 
 syn match tclNamespaceCommand /\v<namespace eval>\s+\S+/ contains=tclNamespaceName
@@ -57,5 +62,19 @@ syn match tclClassName /\v<oo::define>\s+\S+/ms=s+10 contained
 
 hi link tclClassCommand Type
 hi link tclClassName Function
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" I don't use tk
+
+if !get(b:, 'usestk', 0)
+  syn clear tcltkWidget
+  syn clear tcltkWidgetColor
+  syn clear tcltkWidgetSwitch
+  syn clear tcltkPackConf
+  syn clear tcltkPackSwitch
+  syn clear tcltkPackConfSwitch
+endif
 
 

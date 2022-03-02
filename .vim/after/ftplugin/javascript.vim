@@ -9,6 +9,7 @@ inoremap <buffer> ;f function
 inoremap <buffer> ;a await<space>
 inoremap <buffer> ;c const<space>
 inoremap <buffer> $$ ${}<left>
+inoremap <buffer> >> =>
 
 inoremap <buffer> `<cr> `<cr>`<esc>O
 

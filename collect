@@ -7,5 +7,5 @@ rsync -ar --delete  \
   ~/.vim/dict       \
 .vim
 
-./sanitize
+[ -f ./sanitize ] && ./sanitize
 

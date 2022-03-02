@@ -10,10 +10,13 @@ inoremap <buffer> ;s $
 inoremap <buffer> $$ ${}<left>
 inoremap <buffer> ;0 if 0 {<cr>}<esc>O
 
+inoremap <buffer> ;d dict
+
 if expand('%:e') == 'tcl'
   nnoremap <buffer> <leader>tt :Term tclsh<cr>:call Tcl_SetupRepl()<cr>
   nnoremap <buffer> <leader>tw :Term wish<cr>:call Tcl_SetupRepl()<cr>
   nnoremap <buffer> <leader>tr :call Tcl_SetupRepl()<cr>
+  nnoremap <buffer> <leader>tj :Term jimsh<cr>
 else
   nnoremap <buffer> <leader>tt :Term jimsh<cr>
 endif

@@ -31,6 +31,9 @@ syn keyword sqlKeyword TRIGGER UNBOUNDED UNION UNIQUE UPDATE USING
 syn keyword sqlKeyword VACUUM VALUES VIEW VIRTUAL WHEN WHERE WINDOW WITH
 syn keyword sqlKeyword WITHOUT
 
+" https://sqlite.org/forum/forumpost/9b020fbab7db4cd45dab7f8e37a7b2540e4e28467654c3b1cf02c21e46dfaf21
+syn keyword sqlKeyword STORED
+
 " Data Types (Core) - https://www.sqlite.org/datatype3.html
 syn keyword sqlType TEXT NUMERIC INTEGER REAL BLOB
 syn keyword sqlSpecial NULL FALSE TRUE

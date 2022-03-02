@@ -1,0 +1,1 @@
+If len is < 0, strlen() is used to calculate it.

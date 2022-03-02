@@ -81,6 +81,9 @@ SQLKeyword TRIGGER UNBOUNDED UNION UNIQUE UPDATE USING
 SQLKeyword VACUUM VALUES VIEW VIRTUAL WHEN WHERE WINDOW WITH
 SQLKeyword WITHOUT
 
+" https://sqlite.org/forum/forumpost/9b020fbab7db4cd45dab7f8e37a7b2540e4e28467654c3b1cf02c21e46dfaf21
+SQLKeyword STORED
+
 " Data Types (Core) - https://www.sqlite.org/datatype3.html
 SQLKeyword TEXT NUMERIC INTEGER REAL BLOB
 SQLKeyword NULL FALSE TRUE
