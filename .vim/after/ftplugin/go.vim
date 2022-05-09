@@ -5,7 +5,7 @@ setl noet
 
 hi link goSpaceError Normal
 
-set indentkeys-=<:>   " switch/case indenting is wonky
+setl indentkeys-=<:>   " switch/case indenting is wonky
 
 
 inoremap <buffer> :: :=<space>

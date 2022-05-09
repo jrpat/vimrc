@@ -1,6 +1,6 @@
 call AutoPairCommon()
 
-set fo+=t
+setl fo+=t
 
 iunmap <buffer> '
 iunmap <buffer> '<bs>
@@ -13,5 +13,5 @@ inoremap <buffer> ** ****<left><left>
 
 inoremap <buffer> ;b <br>
 
-nnoremap <buffer> <leader>y :Stay ggyG<cr>
+nnoremap <buffer> <leader>y :%y<cr>
 

@@ -1,6 +1,6 @@
 call AutoPairCommon()
 
-setlocal omnifunc=htmlcomplete#CompleteTags
+setl omnifunc=htmlcomplete#CompleteTags
 call htmlcomplete#DetectOmniFlavor()
 setl nostartofline
 

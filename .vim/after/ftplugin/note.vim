@@ -1,5 +1,5 @@
-set tw=60
-set fo=qn
+setl tw=60
+setl fo=qn
 
 let b:commentbar = '─'
 
@@ -13,8 +13,8 @@ inoremap <buffer><expr>  [ b:boxing ? '└' : '['
 inoremap <buffer><expr>  } b:boxing ? '┐' : '}'
 inoremap <buffer><expr>  ] b:boxing ? '┘' : ']'
 
-inoremap <buffer><expr> >  (CurChar(-1) =~ '\s') ? '‣' : '>'
-inoremap <buffer><expr> -> (CurChar(-1) =~ '\s') ? '→' : '->'
+inoremap <buffer><expr> >  (CurChar(-1) =~ '\v(^\|\s)') ? '‣' : '>'
+inoremap <buffer><expr> -> (CurChar(-1) =~ '\v(^\|\s)') ? '→' : '->'
 
 inoremap <buffer> ;- <c-r>=TextBar()<cr>
 nnoremap <buffer> ;- yypv$r-

@@ -1,3 +1,5 @@
+if &ft != 'cpp' | finish | endif
+
 syn match cppFunction /\v^[[:alnum:]:]{-}\s*\(/me=e-1
 hi link cppFunction Function
 

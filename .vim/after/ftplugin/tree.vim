@@ -1,7 +1,7 @@
 setl cursorline
 
 setl foldmethod=expr
-set foldtext=TreeFoldText()
+setl foldtext=TreeFoldText()
 
 fun! TreeFoldText()
   return getline(v:foldstart)

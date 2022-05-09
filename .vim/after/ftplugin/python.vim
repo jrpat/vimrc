@@ -1,0 +1,3 @@
+call AutoPairCommon()
+call SwapUnderscoreHyphen()
+

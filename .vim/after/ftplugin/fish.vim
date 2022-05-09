@@ -1,6 +1,6 @@
 call AutoPairCommon()
 
-setlocal indentkeys+==end,=else,=case
-setlocal comments=:#
-setlocal commentstring=#%s
+setl indentkeys+==end,=else,=case
+setl comments=:#
+setl commentstring=#%s
 

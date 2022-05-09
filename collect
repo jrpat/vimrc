@@ -1,3 +1,5 @@
+set -euo pipefail
+
 cp ~/.vimrc .
 
 rsync -ar --delete  \
@@ -9,3 +11,4 @@ rsync -ar --delete  \
 
 [ -f ./sanitize ] && ./sanitize
 
+exit 0

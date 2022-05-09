@@ -2,7 +2,7 @@ call AutoPairCommon()
 
 let g:is_posix=1
 
-set formatoptions+=ro
+setl formatoptions+=ro
 
 inoremap <buffer> ;s $
 inoremap <buffer> $$ $()<left>

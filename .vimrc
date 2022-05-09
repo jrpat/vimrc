@@ -57,6 +57,7 @@ set previewheight=20
 set sidescroll=1
 set sidescrolloff=2
 set ruler
+set shortmess-=S
 
 " Autocomplete
 set completeopt=menuone,noinsert
@@ -85,7 +86,7 @@ set undodir=~/.vim/.undo
 set viminfo+=n~/.vim/.viminfo
 
 " Tags
-set tags=./.git/tags;./.tags
+set tags=.git/tags,.tags
 
 " History
 set history=4096
@@ -105,8 +106,8 @@ let g:netrw_list_hide = '^\./$,^\.\./$'
 let g:netrw_banner = 0
 let g:netrw_hide = 1
 let g:netrw_altfile = 1
-let g:netrw_sort_sequence = '[\/]$,*' . (empty(&suffixes) ? '' : ',\%(' .
-  \ join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$')
+"let g:netrw_sort_sequence = '[\/]$,*' . (empty(&suffixes) ? '' : ',\%(' .
+"  \ join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$')
 
 " SQL
 let g:sql_type_default = 'sqlite'
@@ -124,6 +125,9 @@ augroup END
 " Modelines
 set modeline
 set modelines=4
+
+" C syntax by default
+let g:c_syntax_for_h = 1
 
 
 
@@ -153,10 +157,10 @@ map gl <c-w>l
 map gh <c-w>h
 
 " Folds
-nmap <leader>f0 :setl foldlevel=0<cr>
-nmap <leader>f9 :setl foldlevel=99<cr>
-nmap <leader>f<leader> zA
-nmap <leader>ff za
+nmap <leader>z0 :setl foldlevel=0<cr>
+nmap <leader>z9 :setl foldlevel=99<cr>
+nmap <leader>z<leader> zA
+nmap <leader>zz za
 
 " Buffers
 nmap <leader>. :b#<cr>
@@ -173,6 +177,7 @@ nmap <leader>so :call FuzzyFind('ls -1 ~/.vim/sessions', ':SessionLoad %s')<cr>
 
 " Fuzzy Find
 nmap <leader>ee  :call FuzzyFile('', 'EditX %s')<cr>
+nmap <leader><leader> <leader>ee
 nmap <leader>er  :call FuzzyFind("cat ~/.vim/.mru", 'EditX %s')<cr>
 nmap <leader>e-  :call FuzzyFile('--no-ignore '.getcwd(), 'EditX %s')<cr>
 nmap <leader>e.  :call FuzzyBufs(':b %s')<cr>
@@ -211,6 +216,9 @@ imap <c-\> <esc>:call SnipNext('b')<cr>
 map <leader>w :w<cr>
 map <leader>q :q<cr>
 map Q @q
+" per doom-emacs
+nnoremap <leader>fs :w<cr>
+nnoremap <leader>wq :q<cr>
 
 " Visual Mode
 vnoremap <expr> v (mode() ==# 'v' ? 'V' : '<c-v>')
@@ -222,6 +230,10 @@ xnoremap il g_o_o
 xnoremap al $o_o
 onoremap il :normal vil<cr>
 onoremap al :normal val<cr>
+
+" Buffer Object
+onoremap ag :<c-u>normal! mzggVG<cr>`z
+xnoremap ag :<c-u>normal! mzggVG<cr>
 
 " 'Definition' Object
 xnoremap ii a{V
@@ -293,9 +305,15 @@ nnoremap <leader>\ :BslashEOL<cr>
 vnoremap <leader>\ :BslashEOL<cr>
 
 " DirTree
-nnoremap <leader>dp :topleft 32vnew \| set winfixwidth \| wincmd = \| Tree -l<cr>
+nnoremap <leader>dp :topl 32vnew \| set winfixwidth \| wincmd = \| Tree -l<cr>
 nnoremap <leader>dq :exe winbufnr(1).'bwipeout' \| echo<cr>
 nnoremap <leader><tab> 1<c-w>w
+
+" Some common imaps
+inoremap ;>> →
+inoremap ;<< ←
+inoremap ;// ✓
+inoremap ;X ✗
 
 
 
@@ -329,13 +347,27 @@ fun! Chars(str)
   return split(a:str, '\zs')
 endfun
 
+fun! Warn(msg)
+  call EchoHL('EchoBad', a:msg)
+endfun
+
 let g:ctags_opt = get(g:, 'ctags_opt', ['--kinds-C=*'])
 fun! GenCTags()
   let dir = getcwd()
-  let opt = '-R --sort=yes --extras=Ff -f .git/tags'
-  let cmd = 'ctags '.opt.' '.(g:ctags_opt.join(' '))
-  echom cmd.' '.dir
-  call TaskStart('ctags', cmd.' '.dir)
+  let tagfile = ''
+  for fname in split(&tags, ';')
+    if isdirectory(fnamemodify(fname, ':h'))
+      let tagfile = fname | break
+    endif
+  endfor
+  if tagfile == ''
+    call Warn('No valid tag file found!')
+    return
+  endif
+  let opt = '-R --sort=yes --extras=Ff -f '.tagfile
+  let cmd = printf('ctags %s %s %s', opt, join(g:ctags_opt, ' '), dir)
+  echom cmd
+  call TaskStart('ctags', cmd)
 endfun
 
 fun! ShouldSwapUnderscoreHyphen(char)
@@ -348,7 +380,6 @@ fun! SwapUnderscoreHyphen()
 "  inoremap <buffer> _ -
 "  inoremap <buffer> - _
 endfun
-
 
 fun! StayNormal(cmds)
   let b:StayNormal = winsaveview()
@@ -439,7 +470,7 @@ fun! BrowseDirectory()
   Ex
   setl bufhidden=wipe buftype=quickfix
   nnoremap <buffer> <leader>q :Rex<cr>
-  exe 'silent! /\v^'.fname.'$'
+  exe 'silent! /\v^'.fname.'\*?$'
 endfun
 
 
@@ -757,9 +788,9 @@ nmap <expr> <leader>[ (CurChar() =~ "\[[({\]") ? "myv%\"_S['y" : "myviw\"_S['y"
 nmap <expr> <leader>{ (CurChar() =~ "\[[({\]") ? "myv%\"_S{'y" : "myviw\"_S{'y"
 
 " Convert the grouping to a different pair
-noremap <leader><leader>( %r)<c-o>r(
-noremap <leader><leader>[ %r]<c-o>r[
-noremap <leader><leader>{ %r}<c-o>r{
+noremap <leader>g( %r)<c-o>r(
+noremap <leader>g[ %r]<c-o>r[
+noremap <leader>g{ %r}<c-o>r{
 
 
 

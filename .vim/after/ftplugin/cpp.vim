@@ -1,4 +1,6 @@
-set comments+=b:///
+if &ft != 'cpp' | finish | endif
+
+setl comments+=b:///
 
 " override c ftplugin
 let b:commentbar = '/'
@@ -13,12 +15,18 @@ OtherFile cpp hpp,h
 OtherFile h cpp,cc
 
 
+fun! CPPReference(q)
+  call system('open "https://duckduckgo.com/?sites=cppreference.com&q='.a:q.'"')
+endfun
+com! -nargs=1 CPPReference call CPPReference(<f-args>)
+
+nnoremap <buffer> <leader>hr :CPPReference<space>
+
 inoremap <buffer> #P #pragma<space>
-inoremap <buffer> ;s std::
 inoremap <buffer> ;t template <><left>
-inoremap <buffer> ;cs char*<space>
-inoremap <buffer> ;ccs const char*<space>
+inoremap <buffer> ;s std::
 inoremap <buffer> ;m m_
+inoremap <buffer> ;z *
 
 inoremap <buffer> << <<
 
@@ -28,13 +36,20 @@ inoremap <buffer> <> <>
 inoremap <buffer> ;; ::
 inoremap <buffer> ;: <esc>myA;<esc>`ya
 
-inoremap <buffer> /*<space> /*  */<left><left><left>
-inoremap <buffer> /*<cr> /*<cr>X<cr>/<esc>k0fX"_s
+inoremap <buffer> /* /*  */<left><left><left>
 
-" ... is used more in cpp than c, so let's accomodate that
+
 iunmap <buffer> ..
 iunmap <buffer> .,.
 inoremap <buffer> .> ->
+
+iunmap <buffer> ;n
+inoremap <buffer> ;ne noexcept
+
+iunmap <buffer> ;cs
+iunmap <buffer> ;ccs
+inoremap <buffer> ;c const
+
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -50,19 +65,25 @@ nnoremap <buffer> <leader>xM :CPPBuild<cr>
 nnoremap <buffer> <leader>xx :CPPRun<cr>
 nnoremap <buffer> <leader>xX :CPPRun<cr>
 
-let b:cflags = get(b:, 'cflags', {"Wall":1, "Wextra":1})
+let b:cflags = get(b:, 'cflags', {"Wall":1, "Wextra":1, "std":"c++20"})
+let b:clibs = get(b:, 'clibs', {'m': 1})
+let b:cxx = get(b:, 'cxx', 'c++')
 
-fun! s:cpp(run, ...)
-  let flags = a:0 ? a:1 : ''
-  for [k, v] in items(b:cflags)
+fun! s:cpp(run)
+  let flags = ''
+  for [k,v] in items(b:cflags)
     if (v || len(v)) | let flags = flags.' -'.k.(v==1 ? '' : '='.v) | endif
   endfor
+  let libs = ''
+  for [k,v] in items(b:clibs)
+    if (v || len(v)) | let libs = libs.' -l'.k | endif
+  endfor
   let out = '/tmp/vimrepl_'.expand('%:t:r')
-  call system('rm '.out)
-  let libs = '-lm'
-  let cmd = 'c++ '.expand('%').' -o '.out.' '.flags.' '.libs
-  call TermEval(cmd.(a:run ? ' && '.out : ''))
+  let cmd = printf('%s     %s           -o %s   %s     %s',
+                  \ b:cxx, expand('%'),    out, flags, libs)
+  call TermEval('rm -f '.out.' && '.cmd.(a:run ? ' && '.out : ''))
   return out
 endfun
 command! -buffer CPPRun call s:cpp(1)
 command! -buffer CPPBuild call s:cpp(0)
+

@@ -1,4 +1,4 @@
-set isk+=-
+setl isk+=-
 
 call AutoPairCommon()
 
