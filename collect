@@ -2,6 +2,10 @@ set -euo pipefail
 
 cp ~/.vimrc .
 
+cp ~/.vim/init.vim ./.vim
+cp ~/.vim/init-macos.vim ./.vim
+cp ~/.vim/init-linux.vim ./.vim
+
 rsync -ar --delete  \
   ~/.vim/after      \
   ~/.vim/colors     \
