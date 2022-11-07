@@ -1,1 +1,1 @@
-au BufNewFile,BufRead config set ft=conf
+au BufNewFile,BufRead config,.lldbinit,*.lldb set ft=conf

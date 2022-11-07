@@ -26,7 +26,7 @@ inoremap <buffer> #P #pragma<space>
 inoremap <buffer> ;t template <><left>
 inoremap <buffer> ;s std::
 inoremap <buffer> ;m m_
-inoremap <buffer> ;z *
+inoremap <buffer> ;d *
 
 inoremap <buffer> << <<
 
@@ -39,8 +39,6 @@ inoremap <buffer> ;: <esc>myA;<esc>`ya
 inoremap <buffer> /* /*  */<left><left><left>
 
 
-iunmap <buffer> ..
-iunmap <buffer> .,.
 inoremap <buffer> .> ->
 
 iunmap <buffer> ;n
@@ -55,6 +53,12 @@ inoremap <buffer> ;c const
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " REPL - no real repl, so we use shell + compile/run
 
+call extend(b:cflags, {
+      \ 'std':'c++20',
+      \ 'I/opt/homebrew/include':1,
+      \ 'L/opt/homebrew/lib':1,})
+let b:cxx = get(b:, 'cxx', '/opt/homebrew/opt/llvm/bin/clang++')
+
 " open term
 nnoremap <buffer> <leader>tt :Term $SHELL<cr>
 
@@ -64,10 +68,6 @@ nnoremap <buffer> <leader>xM :CPPBuild<cr>
 " build and run
 nnoremap <buffer> <leader>xx :CPPRun<cr>
 nnoremap <buffer> <leader>xX :CPPRun<cr>
-
-let b:cflags = get(b:, 'cflags', {"Wall":1, "Wextra":1, "std":"c++20"})
-let b:clibs = get(b:, 'clibs', {'m': 1})
-let b:cxx = get(b:, 'cxx', 'c++')
 
 fun! s:cpp(run)
   let flags = ''
@@ -79,8 +79,7 @@ fun! s:cpp(run)
     if (v || len(v)) | let libs = libs.' -l'.k | endif
   endfor
   let out = '/tmp/vimrepl_'.expand('%:t:r')
-  let cmd = printf('%s     %s           -o %s   %s     %s',
-                  \ b:cxx, expand('%'),    out, flags, libs)
+  let cmd = printf('%s %s -o %s %s %s', b:cxx, expand('%'), out, flags, libs)
   call TermEval('rm -f '.out.' && '.cmd.(a:run ? ' && '.out : ''))
   return out
 endfun

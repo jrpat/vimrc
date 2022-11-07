@@ -117,7 +117,7 @@ augroup quickfix | au!
   " always show cursor line:
   au FileType qf setl cursorline
   " open files in most recent window:
-  au FileType qf nnoremap <cr> :exe 'wincmd p \| '.line('.').'cc'<cr>
+  au FileType qf nnoremap <buffer> <cr> :exe 'wincmd p \| '.line('.').'cc'<cr>
   " set height to 1/3 of the screen:
   au FileType qf exe (&lines / 3).'wincmd _'
 augroup END
@@ -181,7 +181,10 @@ nmap <leader><leader> <leader>ee
 nmap <leader>er  :call FuzzyFind("cat ~/.vim/.mru", 'EditX %s')<cr>
 nmap <leader>e-  :call FuzzyFile('--no-ignore '.getcwd(), 'EditX %s')<cr>
 nmap <leader>e.  :call FuzzyBufs(':b %s')<cr>
-nmap <leader>e;  :exe 'edit /tmp/scratch-'.localtime()<cr>
+nmap <leader>e;  :edit ~/.vim/bookmarks<cr>
+nmap <leader>e~  :exe 'edit /tmp/scratch-'.localtime()<cr>
+nmap <leader>ev  :edit ~/.vim/init.vim<cr>
+nmap <leader>ez  :edit ~/.zshrc<cr>
 nmap <leader>ete :call FuzzyFile('', 'tab split %s')<cr>
 nmap <leader>etr :call FuzzyFind('cat ~/.vim/.mru', 'tab split %s')<cr>
 nmap <leader>et- :call FuzzyFile('--no-ignore '.getcwd(), 'tab split %s')<cr>
@@ -200,6 +203,7 @@ vmap <leader>vv "vy:<c-u>@V<cr>
 nmap <leader>vv vil<leader>vv
 nmap <leader>vp myvip<leader>vv'y
 nmap <leader>vf myggVG<leader>vv'y
+nmap <leader>vc :<c-r>= substitute(getline('.'), substitute(&commentstring, '%s', '', ''), '', '')<cr><cr>
 
 " Windows
 nmap <leader>pq :pclose<cr>
@@ -235,11 +239,16 @@ onoremap al :normal val<cr>
 onoremap ag :<c-u>normal! mzggVG<cr>`z
 xnoremap ag :<c-u>normal! mzggVG<cr>
 
+" 'Form' Object
+xnoremap af a{V
+onoremap af :normal vaf<cr>
+
 " 'Definition' Object
-xnoremap ii a{V
-xnoremap io <esc>/^}<cr>V%
-onoremap ii :normal vii<cr>
-onoremap io :normal vio<cr>
+xnoremap ad <esc>/^}<cr>V%
+onoremap ad :normal vad<cr>
+
+" Indent whole file
+nmap <leader>= =ag
 
 " Command-Line Conveniences
 cmap ;l <lt>leader>
@@ -275,12 +284,13 @@ nmap <leader>t; :Term bash<cr><c-w>p
 vmap <leader>x<leader> "xy:<c-u>call TermEval(@x, 1)<cr>
 nmap <leader>x<leader> :call TermEval(getline('.'), 1)<cr>
 " send and stay:
-vmap <leader>xx "xy:<c-u>call TermEval(@x)<cr>
+vmap <leader>xx my"xy:<c-u>call TermEval(@x)<cr>'y
 nmap <leader>xx :call TermEval(getline('.'))<cr>
-nmap <leader>xf :Stay ggVG<leader>xx<cr>
+nmap <leader>xg :Stay ggVG<leader>xx<cr>
 nmap <leader>xp :Stay vip<leader>xx<cr>
-nmap <leader>xi :Stay vii<leader>xx<cr>
-nmap <leader>xo :Stay vio<leader>xx<cr>
+nmap <leader>xf :Stay vaf<leader>xx<cr>
+nmap <leader>xd :Stay vad<leader>xx<cr>
+nmap <leader>x$ :Stay v$h<leader>xx<cr>
 imap <c-f8> <esc><leader>xxa
 
 " Errors
@@ -309,12 +319,35 @@ nnoremap <leader>dp :topl 32vnew \| set winfixwidth \| wincmd = \| Tree -l<cr>
 nnoremap <leader>dq :exe winbufnr(1).'bwipeout' \| echo<cr>
 nnoremap <leader><tab> 1<c-w>w
 
+" Search
+nnoremap <leader>/ :Grep 
+nnoremap <leader>% :Grep  %<left><left>
+
+" Bookmarks
+nnoremap <leader><cr> :BookmarkSet<cr>
+nnoremap <leader>; :BookmarkGoto<cr>
+nnoremap <leader>~ :BookmarkDel<cr>
+
+" Git
+nnoremap <leader>gg :Git<cr>
+command! Git call system('tmux split-window -fvb -l 50% lazygit')
+
 " Some common imaps
 inoremap ;>> →
 inoremap ;<< ←
-inoremap ;// ✓
-inoremap ;X ✗
-
+inoremap ;// ✔ 
+inoremap ;xx ✗
+inoremap ;.. …
+inoremap ;={ ┌
+inoremap ;=[ └
+inoremap ;=} ┐
+inoremap ;=] ┘
+inoremap ;== ─
+inoremap ;\|\| │
+inoremap ;\|=  ├
+inoremap ;=\|  ┤
+inoremap ;=t   ┬
+inoremap ;=b   ┴
 
 
 
@@ -355,7 +388,7 @@ let g:ctags_opt = get(g:, 'ctags_opt', ['--kinds-C=*'])
 fun! GenCTags()
   let dir = getcwd()
   let tagfile = ''
-  for fname in split(&tags, ';')
+  for fname in split(&tags, ',')
     if isdirectory(fnamemodify(fname, ':h'))
       let tagfile = fname | break
     endif
@@ -366,7 +399,7 @@ fun! GenCTags()
   endif
   let opt = '-R --sort=yes --extras=Ff -f '.tagfile
   let cmd = printf('ctags %s %s %s', opt, join(g:ctags_opt, ' '), dir)
-  echom cmd
+"  echom cmd
   call TaskStart('ctags', cmd)
 endfun
 
@@ -481,14 +514,14 @@ endfun
 
 fun! SourceLocalVimrc()
   if (getcwd() == expand('~')) | return | endif
-  try | let root = GitRoot() | catch | let root = expand('%:p:h') | endtry
+  try | let root = GitRoot() | catch | let root = getcwd() | endtry
   let dir = expand('%:p:h')
   let file = root.'/.vimrc'
   if filereadable(file) | exe "source ".file | echom "Sourced ".file | endif
 endfun
 
 fun! FileTypeFn(type, fn)
-  " Run filetype setup when files are loaded
+  " Run fn when a file of type is loaded and right now if applicable
   exe printf('augroup ft_%s | au!', a:type)
   exe printf('au FileType %s call %s()', a:type, a:fn)
   exe printf('augroup END')
@@ -497,6 +530,7 @@ endfun
 command! -nargs=+ FileTypeFn call FileTypeFn(<f-args>)
 
 fun! FileNameFn(name, fn)
+  " Run fn when a file named name is loaded and right now if applicable
   let auname = substitute(a:name, '[^[:alnum:]]', '_', 'g')
   exe printf('augroup file_%s | au!', auname)
   exe printf('au BufRead %s call %s()', a:name, a:fn)
@@ -652,7 +686,7 @@ endfun
 
 fun! TermOpen(split)
   let term = TermGet() | if !len(term) | return | endif
-  let pre = ((winnr('#') == 1) || a:split) ? 'botright vert s' : '2windo '
+  let pre = ((winnr('#') == 1) || a:split) ? 'vert s' : '2windo '
   exe pre.'b'.(term.buf)
   wincmd p
 endfun
@@ -698,7 +732,7 @@ fun! TermGo()
   exe bufwinnr(term.buf).'wincmd w'
 endfun
 
-command! -nargs=1 -bang -complete=file Term call TermCreate(<f-args>, <bang>0 ? '' : 'botright vert')
+command! -nargs=1 -bang -complete=file Term call TermCreate(<f-args>, <bang>0 ? '' : 'rightb vert')
 command! -nargs=1 -bang -complete=file TermBelow call TermCreate(<f-args>, 'below')
 command! -nargs=1 -bang TermDo call TermDo(<q-args>, <bang>0)
 command! -nargs=1 -bang TermEval call TermEval(<q-args>, <bang>0)
@@ -835,10 +869,12 @@ fun! MRUSaveFiles()
   let thisfile = MRUThisFile()
   if !len(thisfile) | return | endif
   let mrufile = '~/.vim/.mru'
-  let cmd = 'touch '.mrufile.';'
-      \   . 'sed -i -e "\|'.thisfile.'|d" '.mrufile.';'
-      \   . 'sed -i -e "/^\s*$/d" '.mrufile.';'
-      \   . 'printf "'.thisfile.'\n$(cat '.mrufile.')" > '.mrufile
+  let mrutemp = mrufile.'__tmp'
+  let cmd =  'touch '.mrufile
+      \ .';'.'printf "'.thisfile.'\n$(cat '.mrufile.')" > '.mrufile
+      \ .';'."awk '!a[$0]++' ".mrufile.' > '.mrutemp
+      \ .';'.'head -n 500 '.mrutemp.' > '.mrufile
+      \ .';'.'rm '.mrutemp
   let b:mrujob = ShellJob(cmd)
 endfun
 
@@ -971,6 +1007,46 @@ fun! OtherFile_Add(ext, others)
 endfun
 
 command! -nargs=+ OtherFile call OtherFile_Add(<f-args>)
+
+
+
+
+" }}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" {{{ Bookmarks
+
+let g:markfile = '~/.vim/bookmarks'
+
+fun! Bookmark(fn)
+  let cmd = 'touch '.g:markfile.' && cat '.g:markfile
+  call FuzzyFind(cmd, 'call '.a:fn.'("%s")')
+endfun
+
+fun! Bookmark_Set(mark)
+  if (stridx(a:mark, "\t") > -1)
+    let [name, path, line] = split(a:mark, "\t")
+  else
+    let name = a:mark
+  endif
+  let path = expand('%:p')
+  let cmd = 'sed "\|^'.name.'|d" -i '.g:markfile.';'
+        \ . "printf '".name.'\t'.expand('%:p').'\t'.line('.')."' >> ".g:markfile
+  call ShellJob(cmd)
+endfun
+
+fun! Bookmark_Del(mark)
+  let [name, path, line] = split(a:mark, "\t")
+  let cmd = 'sed -i -e "\|^'.name.'|d" '.g:markfile
+  call ShellJob(cmd)
+endfun
+
+fun! Bookmark_Goto(mark)
+  let [name, path, line] = split(a:mark, "\t")
+  exe 'e '.path.'|norm'.line.'gg'
+endfun
+
+command! BookmarkSet call Bookmark('Bookmark_Set')
+command! BookmarkDel call Bookmark('Bookmark_Del')
+command! BookmarkGoto call Bookmark('Bookmark_Goto')
 
 
 

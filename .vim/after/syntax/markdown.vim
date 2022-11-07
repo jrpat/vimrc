@@ -1,0 +1,2 @@
+hi markdownItalic cterm=NONE
+

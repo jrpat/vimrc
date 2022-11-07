@@ -3,7 +3,7 @@
 
 hi clear
 syn reset
-let g:colors_name = "jr-dark"
+let g:colors_name = "jr-dark-mono"
 set bg=dark
 
 
@@ -53,48 +53,49 @@ hi netrwTreeBar       cterm=NONE      ctermbg=NONE  ctermfg=8
 " Syntax
 
 hi Comment            cterm=NONE      ctermbg=NONE  ctermfg=08
-hi Constant           cterm=NONE      ctermbg=NONE  ctermfg=09
+hi Constant           cterm=NONE      ctermbg=NONE  ctermfg=15
 hi String             cterm=NONE      ctermbg=NONE  ctermfg=02
 hi Character          cterm=NONE      ctermbg=NONE  ctermfg=02
-hi Number             cterm=NONE      ctermbg=NONE  ctermfg=09
-hi Boolean            cterm=NONE      ctermbg=NONE  ctermfg=09
-hi Float              cterm=NONE      ctermbg=NONE  ctermfg=09
+hi Number             cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Boolean            cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Float              cterm=NONE      ctermbg=NONE  ctermfg=15
 
-hi Identifier         cterm=NONE      ctermbg=NONE  ctermfg=06
-hi Function           cterm=NONE      ctermbg=NONE  ctermfg=03
+hi Identifier         cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Function           cterm=NONE      ctermbg=NONE  ctermfg=04
 
 hi Statement          cterm=NONE      ctermbg=NONE  ctermfg=01
-hi Conditional        cterm=NONE      ctermbg=NONE  ctermfg=01
-hi Repeat             cterm=NONE      ctermbg=NONE  ctermfg=01
+hi Conditional        cterm=NONE      ctermbg=NONE  ctermfg=05
+hi Repeat             cterm=NONE      ctermbg=NONE  ctermfg=05
 hi Label              cterm=NONE      ctermbg=NONE  ctermfg=05
-hi Operator           cterm=NONE      ctermbg=NONE  ctermfg=07
-hi Keyword            cterm=NONE      ctermbg=NONE  ctermfg=01
-hi Exception          cterm=NONE      ctermbg=NONE  ctermfg=01
+hi Operator           cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Keyword            cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Exception          cterm=NONE      ctermbg=NONE  ctermfg=15
 
-hi PreProc            cterm=NONE      ctermbg=NONE  ctermfg=03
-hi Include            cterm=NONE      ctermbg=NONE  ctermfg=04
-hi Define             cterm=NONE      ctermbg=NONE  ctermfg=05
-hi Macro              cterm=NONE      ctermbg=NONE  ctermfg=05
-hi PreCondit          cterm=NONE      ctermbg=NONE  ctermfg=03
+hi PreProc            cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Include            cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Define             cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Macro              cterm=NONE      ctermbg=NONE  ctermfg=15
+hi PreCondit          cterm=NONE      ctermbg=NONE  ctermfg=15
 
-hi Type               cterm=NONE      ctermbg=NONE  ctermfg=04
-hi StorageClass       cterm=NONE      ctermbg=NONE  ctermfg=04
-hi Structure          cterm=NONE      ctermbg=NONE  ctermfg=05
-hi Typedef            cterm=NONE      ctermbg=NONE  ctermfg=04
+hi Type               cterm=NONE      ctermbg=NONE  ctermfg=15
+hi StorageClass       cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Structure          cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Typedef            cterm=NONE      ctermbg=NONE  ctermfg=15
 
-hi Special            cterm=NONE      ctermbg=NONE  ctermfg=06
-hi SpecialChar        cterm=NONE      ctermbg=NONE  ctermfg=06
-hi Tag                cterm=NONE      ctermbg=NONE  ctermfg=03
-hi Delimiter          cterm=NONE      ctermbg=NONE  ctermfg=14
-hi SpecialComment     cterm=NONE      ctermbg=NONE  ctermfg=06
-hi Debug              cterm=NONE      ctermbg=NONE  ctermfg=01
+hi Special            cterm=NONE      ctermbg=NONE  ctermfg=15
+hi SpecialChar        cterm=NONE      ctermbg=NONE  ctermfg=10
+hi Tag                cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Delimiter          cterm=NONE      ctermbg=NONE  ctermfg=15
+hi SpecialComment     cterm=NONE      ctermbg=NONE  ctermfg=15
+hi Debug              cterm=NONE      ctermbg=NONE  ctermfg=15
 
-hi Error              cterm=NONE      ctermbg=01    ctermfg=00
+hi Title              cterm=NONE      ctermbg=NONE  ctermfg=15
+
+hi Error              cterm=NONE      ctermbg=01    ctermfg=15
 
 hi Todo               cterm=NONE      ctermbg=NONE  ctermfg=08
 
-hi vimGroup           cterm=NONE      ctermbg=NONE  ctermfg=4
-hi htmlItalic         cterm=NONE      ctermbg=NONE  ctermfg=NONE
+hi vimGroup           cterm=NONE      ctermbg=NONE  ctermfg=15
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -103,8 +104,4 @@ hi htmlItalic         cterm=NONE      ctermbg=NONE  ctermfg=NONE
 hi EchoGood ctermfg=2
 hi EchoBad  ctermfg=1
 
-hi TreeDirectory  ctermfg=6
-hi TreeDirSlash   ctermfg=2
-hi TreeFile       ctermfg=4
-hi TreeStem       ctermfg=0
 

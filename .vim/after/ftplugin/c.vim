@@ -37,8 +37,7 @@ fun! C_ShouldArrow()
 endfun
 
 " easier arrow operator
-inoremap <buffer><expr> .. C_ShouldArrow() ? '->' : '..'
-inoremap <buffer> .,. ...
+inoremap <buffer> .> ->
 
 " disable autopair for angle brackets
 inoremap <buffer> < <
@@ -47,7 +46,7 @@ inoremap <buffer> <> <><left>
 inoremap <buffer> ;; <esc>myA;<esc>`ya
 "inoremap <buffer> ;r<space> return<space>
 inoremap <buffer> ;a &
-inoremap <buffer> ;s *
+inoremap <buffer> ;d *
 inoremap <buffer> ;n \n
 inoremap <buffer> ;cs char *
 inoremap <buffer> ;ccs const char *
@@ -83,6 +82,10 @@ nnoremap <leader>hM :tab term ++close man<space>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " REPL - no real repl, so we use shell + compile/run
 
+let b:clibs = get(b:, 'clibs', {'m':1})
+let b:cflags = get(b:, 'cflags', {})
+"let b:cflags = get(b:, 'cflags', {'Wall':1, 'Wextra':1})
+
 " open term
 nnoremap <buffer> <leader>tt :Term $SHELL<cr>
 
@@ -97,16 +100,17 @@ nnoremap <buffer> <leader>xX :CCRun<cr>
 " send to repl
 nnoremap <buffer> <leader>xl :call TermEval(getline('.'))<cr>
 
-let b:cflags = get(b:, 'cflags', {"Wall":1, "Wextra":1})
-
 fun! s:cc(run, ...)
   let flags = a:0 ? a:1 : ''
   for [k, v] in items(b:cflags)
     if (v || len(v)) | let flags = flags.' -'.k.(v==1 ? '' : '='.v) | endif
   endfor
+  let libs = ''
+  for [k,v] in items(b:clibs)
+    if (v || len(v)) | let libs = libs.' -l'.k | endif
+  endfor
   let out = '/tmp/vimrepl_'.expand('%:t:r')
   call system('rm '.out)
-  let libs = '-lm'
   let cmd = 'cc '.expand('%').' -o '.out.' '.flags.' '.libs
   call TermEval(cmd.(a:run ? ' && '.out : ''))
   return out
