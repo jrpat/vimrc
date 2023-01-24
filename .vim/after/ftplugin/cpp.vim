@@ -38,6 +38,8 @@ inoremap <buffer> ;: <esc>myA;<esc>`ya
 
 inoremap <buffer> /* /*  */<left><left><left>
 
+inoremap <buffer> \" \"\"<left><left>
+
 
 inoremap <buffer> .> ->
 

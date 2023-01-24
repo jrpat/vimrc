@@ -1,6 +1,8 @@
 call AutoPairCommon()
 call SwapUnderscoreHyphen()
 
+set isk+=$
+
 inoremap <buffer> < <
 inoremap <buffer> ;0 if (0) {<cr>}<esc>O
 inoremap <buffer> ;t this.
@@ -8,6 +10,7 @@ inoremap <buffer> ;l console.log()<left>
 inoremap <buffer> ;f function
 inoremap <buffer> ;a await<space>
 inoremap <buffer> ;c const<space>
+inoremap <buffer> ;s $
 inoremap <buffer> ${ ${}<left>
 inoremap <buffer> >> =>
 

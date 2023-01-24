@@ -1,6 +1,7 @@
-call AutoPairCommon()
+call AutoPairCommon({'angle':0})
 
 
-inoremap <buffer> ;s $
-inoremap <buffer> $$ $()<left>
+inoremap <buffer> ;< $<
+inoremap <buffer> ;a $@
+inoremap <buffer> ;s $()<left>
 

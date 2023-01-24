@@ -12,6 +12,8 @@ imap <buffer> ;x <lt>esc>
 imap <buffer> ;i inoremap<space>
 imap <buffer> ;n nnoremap<space>
 
+imap <buffer> ;a &
+
 " disable auto-pair quotes
 inoremap <buffer> " "
 inoremap <buffer> "" ""<left>

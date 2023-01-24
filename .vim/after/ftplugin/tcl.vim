@@ -33,8 +33,8 @@ noremap <buffer> <leader>x% :call TermEval('source '.expand('%'))<cr>
 vmap <buffer> <leader>xnx :<c-u>call Tcl_NsEval(@*)<cr>
 nmap <buffer> <leader>xnx :call Tcl_NsEval(getline('.'))<cr>
 nmap <buffer> <leader>xnp myvip<leader>xnx'y
-nmap <buffer> <leader>xni myvii<leader>xnx'y
-nmap <buffer> <leader>xno myvio<leader>xnx'y
+nmap <buffer> <leader>xnf myvaf<leader>xnx'y
+nmap <buffer> <leader>xnd myvad<leader>xnx'y
 nmap <buffer> <leader>xc :call TermEval('clear')<cr>
 
 

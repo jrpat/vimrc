@@ -1,3 +1,5 @@
+" vim: fdm=marker tw=80 sts=2 ts=2 sw=2 et tags=~/.vim/tags :
+
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " {{{ Core
 
@@ -18,11 +20,13 @@ endif
 
 
 
+
 " }}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " {{{ Colors
 
 command! DARK colo jr-dark
 command! LIGHT colo jr-light
+
 
 
 
@@ -58,6 +62,7 @@ set sidescroll=1
 set sidescrolloff=2
 set ruler
 set shortmess-=S
+set fillchars+=eob:·
 
 " Autocomplete
 set completeopt=menuone,noinsert
@@ -128,6 +133,14 @@ set modelines=4
 
 " C syntax by default
 let g:c_syntax_for_h = 1
+
+" Prettier folds
+let &foldtext = "printf('▸%s:::', repeat(' ', ((&sw * v:foldlevel) - 1)))"
+set fcs+=fold:\ 
+
+if (expand('%:t') == 'init.vim')
+  let &foldtext = "printf('▸ %s', strpart(getline(v:foldstart), 6))"
+endif
 
 
 
@@ -203,13 +216,16 @@ vmap <leader>vv "vy:<c-u>@V<cr>
 nmap <leader>vv vil<leader>vv
 nmap <leader>vp myvip<leader>vv'y
 nmap <leader>vf myggVG<leader>vv'y
-nmap <leader>vc :<c-r>= substitute(getline('.'), substitute(&commentstring, '%s', '', ''), '', '')<cr><cr>
+nmap <leader>v/ :<c-r>= CurComment()<cr><cr>
 
 " Windows
 nmap <leader>pq :pclose<cr>
 nnoremap <leader>pQ :call popup_clear(1)<cr>
 nmap <c-w>z :tab sp<cr>
 tnoremap <c-w><tab> gt
+nnoremap <leader>w\ :vs<cr>
+nnoremap <leader>w- :sp<cr>
+nnoremap <leader>wq :q<cr>
 
 " Snippets
 imap \<tab> <esc>:call SnipInsert()<cr>
@@ -217,12 +233,12 @@ imap <c-]> <esc>:call SnipNext()<cr>
 imap <c-\> <esc>:call SnipNext('b')<cr>
 
 " Convenience
-map <leader>w :w<cr>
+nnoremap <leader>fs :w<cr>
 map <leader>q :q<cr>
 map Q @q
-" per doom-emacs
-nnoremap <leader>fs :w<cr>
-nnoremap <leader>wq :q<cr>
+
+" Windows
+nnoremap <leader>w= <c-w>=
 
 " Visual Mode
 vnoremap <expr> v (mode() ==# 'v' ? 'V' : '<c-v>')
@@ -291,6 +307,7 @@ nmap <leader>xp :Stay vip<leader>xx<cr>
 nmap <leader>xf :Stay vaf<leader>xx<cr>
 nmap <leader>xd :Stay vad<leader>xx<cr>
 nmap <leader>x$ :Stay v$h<leader>xx<cr>
+nmap <leader>x/ :call TermEval(CurComment())<cr>
 imap <c-f8> <esc><leader>xxa
 
 " Errors
@@ -336,7 +353,8 @@ command! Git call system('tmux split-window -fvb -l 50% lazygit')
 inoremap ;>> →
 inoremap ;<< ←
 inoremap ;// ✔ 
-inoremap ;xx ✗
+inoremap ;XX ✗
+inoremap ;CC ©
 inoremap ;.. …
 inoremap ;={ ┌
 inoremap ;=[ └
@@ -363,6 +381,10 @@ endfun
 fun! CurChar(...)
   let off = 1 - (a:0 > 0 ? a:1 : 0)
   return GetChar('.', charcol('.') - off)
+endfun
+
+fun! CurComment()
+  return substitute(getline('.'), substitute(&commentstring, '%s', '', ''), '', '')
 endfun
 
 fun! SyntaxAt(line, col, trans)
@@ -404,7 +426,9 @@ fun! GenCTags()
 endfun
 
 fun! ShouldSwapUnderscoreHyphen(char)
-  return (col('.') > 1) && (CurChar(-1) !~ '\v["[:space:]'.a:char.']')
+  let c = CurChar(-1)
+  let other = a:char == '-' ? '_' : '-'
+  return (col('.') > 1) && (c =~ '\v\k') && (c != a:char) && (c != other)
 endfun
 
 fun! SwapUnderscoreHyphen()
@@ -783,14 +807,15 @@ fun! AutoPairQuote(char, ...)
   endfor
 endfun
 
-fun! AutoPairCommon()
-  call AutoPair('()')
-  call AutoPair('[]')
-  call AutoPair('{}')
-  call AutoPair('<>', {'pads':'{<space> { '}, {'lte':'{= {='})
-  call AutoPairQuote('"')
-  call AutoPairQuote("'")
-  call AutoPairQuote('`')
+fun! AutoPairCommon(opt={})
+  let Opt = {x -> get(a:opt, x, 1)}
+  if (Opt('paren')) | call AutoPair('()') | endif
+  if (Opt('brack')) | call AutoPair('[]') | endif
+  if (Opt('brace')) | call AutoPair('{}') | endif
+  if (Opt('dquot')) | call AutoPairQuote('"') | endif
+  if (Opt('squot')) | call AutoPairQuote("'") | endif
+  if (Opt('btick')) | call AutoPairQuote('`') | endif
+  if (Opt('angle')) | call AutoPair('<>', {'pads':'{<space> { '}, {'lte':'{= {='}) | endif
 endfun
 
 
@@ -1083,5 +1108,3 @@ endif
 
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}}}
 
-" vim: set fdm=marker tw=80 sts=2 ts=2 sw=2 et tags=~/.vim/tags :
-"

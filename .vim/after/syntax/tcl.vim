@@ -1,17 +1,22 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Custom Highlighting
 
-syn keyword Keyword set lassign
-syn match Keyword /\v<array set>/
-syn match Keyword /\v<dict set>/
-syn match Keyword /\v(^|\s)<variable>/
+syn keyword tcltkCommandColor set lassign
+syn match tcltkCommandColor /\v<array set>/
+syn match tcltkCommandColor /\v<dict set>/
+syn match tcltkCommandColor /\v(^|\s)<variable>/
 
 syn clear tclCommand
 
-hi link tclRepeat Keyword
-
 syn keyword PreProc source
 syn match PreProc /\v<package require>/
+
+
+hi link tclRepeat         Normal
+hi link tcltkCommandColor Normal
+hi link tclNumber         Normal
+hi link tcltkStringSwitch Normal
+hi link tclConditional    Normal
 
 
 

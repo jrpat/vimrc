@@ -1,4 +1,4 @@
-call AutoPairCommon()
+call AutoPairCommon({'angle':0})
 call AutoPairQuote('`')
 call SwapUnderscoreHyphen()
 
@@ -15,6 +15,8 @@ inoremap <buffer> ;ou ON UPDATE CASCADE
 inoremap <buffer> ;eq EXPLAIN QUERY PLAN
 
 xnoremap <buffer> ii a(V
+
+inoremap <buffer> ;; <esc>myA;<esc>`ya
 
 nnoremap <buffer> <leader>die yyPV:s/ AS//e<cr>$F "_C;<esc>0cwDROP<esc>ea IF EXISTS<esc>0
 

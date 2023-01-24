@@ -11,8 +11,8 @@ setl indentkeys-=<:>   " switch/case indenting is wonky
 inoremap <buffer> :: :=<space>
 inoremap <buffer> ;p fmt.Println()<left>
 inoremap <buffer> ;P fmt.Printf("X", %%%%)<esc>FXs
-inoremap <buffer> ;r &
 inoremap <buffer> ;s *
+inoremap <buffer> ;a &
 
 
 nnoremap <buffer> <leader>tt :Term $SHELL<cr>
