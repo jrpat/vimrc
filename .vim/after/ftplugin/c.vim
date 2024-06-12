@@ -50,6 +50,7 @@ inoremap <buffer> ;d *
 inoremap <buffer> ;n \n
 inoremap <buffer> ;cs char *
 inoremap <buffer> ;ccs const char *
+inoremap <buffer> ;c const
 
 inoremap <buffer> ;i<space> #include<space>
 inoremap <buffer> ;i< #include <><left>

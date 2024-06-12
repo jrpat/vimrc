@@ -20,7 +20,7 @@ hi Directory          cterm=NONE      ctermbg=NONE  ctermfg=4
 hi Folded             cterm=NONE      ctermbg=NONE  ctermfg=8
 hi LineNr             cterm=NONE      ctermbg=NONE  ctermfg=8
 hi CursorLineNr       cterm=NONE      ctermbg=NONE  ctermfg=246
-hi MatchParen         cterm=NONE      ctermbg=8     ctermfg=15
+hi MatchParen         cterm=UNDERLINE ctermbg=8     ctermfg=15
 hi ModeMsg            cterm=NONE      ctermbg=NONE  ctermfg=6
 hi NonText            cterm=NONE      ctermbg=NONE  ctermfg=0
 hi Pmenu              cterm=NONE      ctermbg=237   ctermfg=252

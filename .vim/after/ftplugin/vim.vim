@@ -18,3 +18,5 @@ imap <buffer> ;a &
 inoremap <buffer> " "
 inoremap <buffer> "" ""<left>
 
+inoremap <buffer> $" $""<left>
+

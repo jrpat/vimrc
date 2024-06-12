@@ -54,7 +54,7 @@ set foldmethod=indent
 set hidden
 set nowrap
 set scrolloff=2
-set ttymouse=xterm2
+set ttymouse=sgr
 set laststatus=2
 set mouse=a
 set previewheight=20
@@ -111,6 +111,7 @@ let g:netrw_list_hide = '^\./$,^\.\./$'
 let g:netrw_banner = 0
 let g:netrw_hide = 1
 let g:netrw_altfile = 1
+let g:netrw_fastbrowse = 0
 "let g:netrw_sort_sequence = '[\/]$,*' . (empty(&suffixes) ? '' : ',\%(' .
 "  \ join(map(split(&suffixes, ','), 'escape(v:val, ".*$~")'), '\|') . '\)[*@]\=$')
 
@@ -170,6 +171,8 @@ map gl <c-w>l
 map gh <c-w>h
 
 " Folds
+nmap z0 :setl foldlevel=0<cr>
+nmap z9 :setl foldlevel=99<cr>
 nmap <leader>z0 :setl foldlevel=0<cr>
 nmap <leader>z9 :setl foldlevel=99<cr>
 nmap <leader>z<leader> zA
@@ -198,9 +201,11 @@ nmap <leader>e;  :edit ~/.vim/bookmarks<cr>
 nmap <leader>e~  :exe 'edit /tmp/scratch-'.localtime()<cr>
 nmap <leader>ev  :edit ~/.vim/init.vim<cr>
 nmap <leader>ez  :edit ~/.zshrc<cr>
+nmap <leader>eg  :edit ~/.gitconfig<cr>
 nmap <leader>ete :call FuzzyFile('', 'tab split %s')<cr>
 nmap <leader>etr :call FuzzyFind('cat ~/.vim/.mru', 'tab split %s')<cr>
 nmap <leader>et- :call FuzzyFile('--no-ignore '.getcwd(), 'tab split %s')<cr>
+nmap <leader>eq :let @q='<c-r><c-r>q'
 
 " Refresh
 nmap <leader>rv :source ~/.vimrc<cr>
@@ -226,6 +231,8 @@ tnoremap <c-w><tab> gt
 nnoremap <leader>w\ :vs<cr>
 nnoremap <leader>w- :sp<cr>
 nnoremap <leader>wq :q<cr>
+nnoremap <leader>w= <c-w>=
+nnoremap <leader>wz <c-w>z
 
 " Snippets
 imap \<tab> <esc>:call SnipInsert()<cr>
@@ -236,9 +243,6 @@ imap <c-\> <esc>:call SnipNext('b')<cr>
 nnoremap <leader>fs :w<cr>
 map <leader>q :q<cr>
 map Q @q
-
-" Windows
-nnoremap <leader>w= <c-w>=
 
 " Visual Mode
 vnoremap <expr> v (mode() ==# 'v' ? 'V' : '<c-v>')
@@ -280,7 +284,7 @@ cmap ;i inoremap<space>
 " Comments
 vmap g/ :CommentToggle<cr>
 nmap g/ Vg/
-inoremap <expr> ;- TextBar()
+inoremap <expr> ;-- TextBar()
 nnoremap <leader>_ yypv$r-
 
 " Terminal
@@ -333,6 +337,7 @@ vnoremap <leader>\ :BslashEOL<cr>
 
 " DirTree
 nnoremap <leader>dp :topl 32vnew \| set winfixwidth \| wincmd = \| Tree -l<cr>
+nnoremap <leader>dP :topl 32vnew \| set winfixwidth \| wincmd = \| Tree -l
 nnoremap <leader>dq :exe winbufnr(1).'bwipeout' \| echo<cr>
 nnoremap <leader><tab> 1<c-w>w
 
@@ -350,10 +355,15 @@ nnoremap <leader>gg :Git<cr>
 command! Git call system('tmux split-window -fvb -l 50% lazygit')
 
 " Some common imaps
-inoremap ;>> →
-inoremap ;<< ←
+inoremap ;<- ←
+inoremap ;-> →
+inoremap ;-^ ↑
+inoremap ;-v ↓
+inoremap ;<< «
+inoremap ;>> »
 inoremap ;// ✔ 
 inoremap ;XX ✗
+inoremap ;xx ×
 inoremap ;CC ©
 inoremap ;.. …
 inoremap ;={ ┌
@@ -366,6 +376,9 @@ inoremap ;\|=  ├
 inoremap ;=\|  ┤
 inoremap ;=t   ┬
 inoremap ;=b   ┴
+inoremap ;"" “”<left>
+inoremap ;'' ‘’<left>
+inoremap ;' ’
 
 
 
@@ -426,9 +439,10 @@ fun! GenCTags()
 endfun
 
 fun! ShouldSwapUnderscoreHyphen(char)
-  let c = CurChar(-1)
-  let other = a:char == '-' ? '_' : '-'
-  return (col('.') > 1) && (c =~ '\v\k') && (c != a:char) && (c != other)
+  return 1
+"  let c = CurChar(-1)
+"  let other = a:char == '-' ? '_' : '-'
+"  return (col('.') > 1) && (c =~ '\v[[:keyword:]_-]')
 endfun
 
 fun! SwapUnderscoreHyphen()
@@ -525,7 +539,7 @@ let g:borderchars = ['─', '│', '─', '│', '┌', '┐', '┘', '└']
 fun! BrowseDirectory()
   let fname = expand('%:t')
   Ex
-  setl bufhidden=wipe buftype=quickfix
+  setl bufhidden=wipe buftype=nofile
   nnoremap <buffer> <leader>q :Rex<cr>
   exe 'silent! /\v^'.fname.'\*?$'
 endfun

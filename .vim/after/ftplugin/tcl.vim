@@ -7,6 +7,7 @@ call SwapUnderscoreHyphen()
 inoremap <buffer> ;; ::
 inoremap <buffer> ** {*}
 inoremap <buffer> ;s $
+inoremap <buffer> ;S ${}<left>
 inoremap <buffer> $$ ${}<left>
 inoremap <buffer> ;0 if 0 {<cr>}<esc>O
 

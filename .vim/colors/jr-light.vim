@@ -24,7 +24,7 @@ hi FoldColumn         cterm=NONE      ctermbg=NONE  ctermfg=8
 hi SignColumn         cterm=NONE      ctermbg=NONE  ctermfg=8
 hi LineNr             cterm=NONE      ctermbg=NONE  ctermfg=251
 hi CursorLineNr       cterm=NONE      ctermbg=NONE  ctermfg=248
-hi MatchParen         cterm=NONE      ctermbg=15    ctermfg=0
+hi MatchParen         cterm=INVERSE,UNDERLINE ctermbg=15    ctermfg=0
 hi ModeMsg            cterm=NONE      ctermbg=NONE  ctermfg=8 
 hi NonText            cterm=NONE      ctermbg=NONE  ctermfg=251
 hi Pmenu              cterm=NONE      ctermbg=255   ctermfg=0 
@@ -100,6 +100,8 @@ hi Error              cterm=NONE      ctermbg=01    ctermfg=15
 hi Todo               cterm=NONE      ctermbg=NONE  ctermfg=08
 
 hi vimGroup           cterm=NONE      ctermbg=NONE  ctermfg=4
+
+hi link javaScript NONE
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

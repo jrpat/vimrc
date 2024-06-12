@@ -1,3 +1,3 @@
 call AutoPairCommon()
-call SwapUnderscoreHyphen()
+"call SwapUnderscoreHyphen()
 
